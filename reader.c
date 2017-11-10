@@ -30,16 +30,26 @@ read_stdin(char *out, int size, void *arg)
 		printf("%d個目の文字列を入力して下さい。：", *count);
 		(*count)++;
 	}
+
 	char *s = fgets(out, size, stdin);
 	if(s == NULL) {
 		return -1;
 	}
 	char *p = strchr(s, '\n');
-	if(p != NULL) {
+	if(p == NULL) {
+		// '\n' がない == size 以上の文字列が入力された状態。
+		// 入力バッファに文字列が残っているのでそれをクリアする。
+		for(;;) {
+			int c = fgetc(stdin);
+			if(c == '\n' || c == EOF) {
+				break;
+			}
+		}
+	} else {
 		*p = '\0';
 	}
 
-	// 実用上、読み込んだ文字列長は INT_MAX を超えない見込み
+	// 実用上、読み込んだ文字列長は INT_MAX を超えない見込み。
 	return (int)strlen(s);
 }
 
