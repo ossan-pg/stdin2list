@@ -34,14 +34,12 @@ stdin2list file
 ```
 $ cat output.txt
 zzz
-
 $ ./stdin2list output.txt
 1個目の文字列を入力して下さい。：xxx
 2個目の文字列を入力して下さい。：aaa
 3個目の文字列を入力して下さい。：bbb
 4個目の文字列を入力して下さい。：
 文字列のソート結果をファイルに出力しました。
-
 $ cat output.txt
 zzz
 aaa
