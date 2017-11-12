@@ -1,5 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
+#include "list.h"
 
 /**
  * 標準入力から最大で size - 1 個の文字を読み込み、out が指すバッファに格納します。
@@ -49,7 +52,14 @@ read_stdin(char *out, int size, void *arg)
 		*p = '\0';
 	}
 
-	// 実用上、読み込んだ文字列長は INT_MAX を超えない見込み。
+	// fgets() で指定するバッファサイズ(第2引数) は int 型なので
+	// s の長さは INT_MAX を超えない。
 	return (int)strlen(s);
+}
+
+int
+main(void)
+{
+	return EXIT_SUCCESS;
 }
 
