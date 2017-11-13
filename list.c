@@ -65,7 +65,7 @@ list_add(List *list, const char *s)
 	// 文字列について文字コードで昇順にソートする
 	ListEntry **entry = &(list->head);
 	while(*entry != NULL) {
-		if(strcmp(new_entry->str, (*entry)->str) < 0) {
+		if(strcmp(new_entry->str, (*entry)->str) <= 0) {
 			break;
 		}
 		entry = &((*entry)->next);
