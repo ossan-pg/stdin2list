@@ -46,8 +46,11 @@ typedef struct {
 
 // 参考：https://docs.oracle.com/javase/jp/8/docs/api/java/util/List.html
 
-List *
-list_new_from_reader(Reader read_line, void *arg);
+List
+list_new(void);
+
+int
+list_init_from_reader(List *list, Reader read_line, void *arg);
 
 int
 list_add(List *list, const char *s);
@@ -56,5 +59,5 @@ int
 list_foreach(List *list, Function apply, void *arg);
 
 void
-list_delete(List *list);
+list_clear(List *list);
 

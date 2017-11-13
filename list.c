@@ -5,32 +5,42 @@
 #include "list.h"
 
 /**
- * read_line から 1行ずつ読み込んだ各文字列を要素に持つリストを構築します。
- * このリストの要素は文字列について文字コードで昇順にソートされています。
+ * 要素数が 0 の List を構築します。
+ *
+ * @return 構築した List 。
+ */
+List
+list_new(void)
+{
+	List list = { NULL, 0 };
+	return list;
+}
+
+/**
+ * read_line から 1行ずつ読み込んだ各文字列で list を初期化します。
+ * list の要素は文字列について文字コードで昇順にソートされます。
  *
  * read_line が 0 を返した場合、入力の終端に到達したとみなして
  * 文字列の読み込みを終了します。
  *
- * @retval NULL メモリ領域の確保失敗や文字列の読み込み失敗などの理由で
- *              リストの構築に失敗した。
- * @retval NULL以外 構築したリストのアドレス。
+ * read_line が 0未満の値を返した場合、その時点で処理を中断し
+ * read_line の戻り値を返します。
+ *
+ * @retval 1 read_line は成功したが、list への要素追加に失敗した。
+ * @retval 0 読み込んだ全ての文字列を list へ追加した。
+ * @retval 0未満 最後に実行した read_line の戻り値。
  */
-List *
-list_new_from_reader(Reader read_line, void *arg)
+int
+list_init_from_reader(List *list, Reader read_line, void *arg)
 {
-	List *list = malloc(sizeof(List));
-	if(list == NULL) {
-		fprintf(stderr, "List 用のメモリ領域の確保に失敗しました。");
-		return NULL;
-	}
+	list_clear(list);
 
 	for(;;) {
 		char out[STR_SIZE];
 		int len = read_line(out, sizeof(out), arg);
 		if(len < 0) {
-			fprintf(stderr, "文字列の読み込みに失敗しました。");
-			list_delete(list);
-			return NULL;
+			list_clear(list);
+			return len;
 		} else if(len == 0) {
 			// 読み込む文字列が存在しない場合、終了
 			break;
@@ -38,11 +48,11 @@ list_new_from_reader(Reader read_line, void *arg)
 
 		int result = list_add(list, out);
 		if(result != 0) {
-			list_delete(list);
-			return NULL;
+			list_clear(list);
+			return 1;
 		}
 	}
-	return list;
+	return 0;
 }
 
 /**
@@ -101,22 +111,18 @@ list_foreach(List *list, Function apply, void *arg)
 }
 
 /**
- * list および list の全要素のメモリ領域を解放します。
- * list が NULL の場合は何もしません。
+ * list の全要素を削除します。
  */
 void
-list_delete(List *list)
+list_clear(List *list)
 {
-	if(list == NULL) {
-		return;
-	}
-
 	ListEntry *entry = list->head;
 	while(entry != NULL) {
 		ListEntry *next = entry->next;
 		free(entry);
 		entry = next;
 	}
-	free(list);
+	list->head = NULL;
+	list->size = 0;
 }
 
