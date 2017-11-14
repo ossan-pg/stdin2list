@@ -96,8 +96,8 @@ write_file(const char *s, void *arg)
 /**
  * 標準入力から文字列を読み込み、file へ出力します。
  *
- * @retval 0 処理成功。
- * @retval 0以外 処理失敗。
+ * @retval EXIT_SUCCESS 処理成功。
+ * @retval EXIT_FAILURE 処理失敗。
  */
 static int
 stdin2file(FILE *file)
@@ -105,6 +105,8 @@ stdin2file(FILE *file)
     /*
      * この関数は「main() の処理の一部を切り出したもの」という位置付けのため
      * プログラムの終了に関するエラーメッセージもこの関数内で出力している。
+     *
+     * 戻り値についても main() の戻り値で使用する定数を使用している。
      */
 
     // 標準入力からの読み込み＋ソート済み文字列リスト作成
@@ -114,7 +116,7 @@ stdin2file(FILE *file)
     if(result > 0) {
         fprintf(stderr,
                 "入力された文字列からのリスト構築に失敗したため、プログラムを終了します。\n");
-        return 1;
+        return EXIT_FAILURE;
     } else if(result < 0) {
         switch(result) {
         case INVALID_STR:
@@ -126,7 +128,7 @@ stdin2file(FILE *file)
                     "文字列の読み込みに失敗したため、プログラムを終了します。\n");
             break;
         }
-        return 1;
+        return EXIT_FAILURE;
     }
 
     // 読み込んだ文字列をファイルへ出力
@@ -135,7 +137,7 @@ stdin2file(FILE *file)
 
     list_clear(&list);
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 int
