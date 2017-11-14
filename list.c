@@ -26,9 +26,9 @@ list_new(void)
  * read_line が 0未満の値を返した場合、その時点で処理を中断し
  * read_line の戻り値を返します。
  *
- * @retval 1 read_line は成功したが、list への要素追加に失敗した。
- * @retval 0 読み込んだ全ての文字列を list へ追加した。
- * @retval 0未満 最後に実行した read_line の戻り値。
+ * @retval  1以上 read_line は成功したが、list への要素追加に失敗した。
+ * @retval  0     読み込んだ全ての文字列を list へ追加した。
+ * @retval -1以下 最後に実行した read_line の戻り値。
  */
 int
 list_init_from_reader(List *list, Reader read_line, void *arg)
@@ -42,7 +42,7 @@ list_init_from_reader(List *list, Reader read_line, void *arg)
             list_clear(list);
             return len;
         } else if(len == 0) {
-            // 読み込む文字列が存在しない場合、終了
+            // 入力の終端に到達したため、終了
             break;
         }
 
@@ -93,7 +93,7 @@ list_add(List *list, const char *s)
  * apply が 0 以外の値を返した場合、その時点で処理を中断し
  * apply の戻り値を返します。
  *
- * @retval 0 正常に終了した。
+ * @retval 0     正常に終了した。
  * @retval 0以外 最後に実行した apply の戻り値。
  */
 int
