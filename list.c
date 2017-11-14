@@ -59,7 +59,7 @@ list_init_from_reader(List *list, Reader read_line, void *arg)
  * list の要素が文字列について文字コードで
  * 昇順にソートされた状態になる位置へ s を 追加します。
  *
- * @retval 0 list への s の追加に成功した。
+ * @retval 0     list への s の追加に成功した。
  * @retval 0以外 メモリ領域の確保失敗により list への s の追加に失敗した。
  */
 int
@@ -72,7 +72,7 @@ list_add(List *list, const char *s)
     }
     strncpy(new_entry->str, s, sizeof(new_entry->str));
 
-    // 文字列について文字コードで昇順にソートする
+    // 新規要素の追加位置を決める
     ListEntry **entry = &(list->head);
     while(*entry != NULL) {
         if(strcmp(new_entry->str, (*entry)->str) <= 0) {
@@ -80,6 +80,7 @@ list_add(List *list, const char *s)
         }
         entry = &((*entry)->next);
     }
+    // 要素を追加
     new_entry->next = *entry;
     *entry = new_entry;
 
