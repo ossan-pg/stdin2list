@@ -32,16 +32,16 @@ typedef int (*Function)(const char *s, void *arg);
  * リストの要素を示す構造体です。
  */
 typedef struct ListEntry {
-	char str[STR_SIZE];
-	struct ListEntry *next;
+    char str[STR_SIZE];
+    struct ListEntry *next;
 } ListEntry;
 
 /**
  * リストを示す構造体です。
  */
 typedef struct {
-	ListEntry *head;
-	size_t size;
+    ListEntry *head;
+    size_t size;
 } List;
 
 // 参考：https://docs.oracle.com/javase/jp/8/docs/api/java/util/List.html

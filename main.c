@@ -6,8 +6,8 @@
 #include "list.h"
 
 enum ReadFailureReason {
-	IO_ERROR = -1,
-	INVALID_STR = -2,
+    IO_ERROR = -1,
+    INVALID_STR = -2,
 };
 
 /**
@@ -35,41 +35,41 @@ enum ReadFailureReason {
 static int
 read_stdin(char *out, int size, void *arg)
 {
-	if(arg != NULL) {
-		int *count = arg;
-		printf("%d個目の文字列を入力して下さい。：", *count);
-		(*count)++;
-	}
+    if(arg != NULL) {
+        int *count = arg;
+        printf("%d個目の文字列を入力して下さい。：", *count);
+        (*count)++;
+    }
 
-	char *s = fgets(out, size, stdin);
-	if(s == NULL) {
-		return IO_ERROR;
-	}
-	char *p = strchr(s, '\n');
-	if(p == NULL) {
-		// '\n' がない == size 以上の文字列が入力された状態。
-		// 入力バッファに文字列が残っているのでそれをクリアする。
-		for(;;) {
-			int c = fgetc(stdin);
-			if(c == '\n' || c == EOF) {
-				break;
-			}
-		}
-	} else {
-		*p = '\0';
-	}
+    char *s = fgets(out, size, stdin);
+    if(s == NULL) {
+        return IO_ERROR;
+    }
+    char *p = strchr(s, '\n');
+    if(p == NULL) {
+        // '\n' がない == size 以上の文字列が入力された状態。
+        // 入力バッファに文字列が残っているのでそれをクリアする。
+        for(;;) {
+            int c = fgetc(stdin);
+            if(c == '\n' || c == EOF) {
+                break;
+            }
+        }
+    } else {
+        *p = '\0';
+    }
 
-	// 半角英数字のみを有効とする
-	size_t len = strlen(s);
-	for(size_t i = 0; i < len; i++) {
-		if(!isalnum(s[i])) {
-			return INVALID_STR;
-		}
-	}
+    // 半角英数字のみを有効とする
+    size_t len = strlen(s);
+    for(size_t i = 0; i < len; i++) {
+        if(!isalnum(s[i])) {
+            return INVALID_STR;
+        }
+    }
 
-	// fgets() で指定するバッファサイズ(第2引数) は int 型なので
-	// s の長さは INT_MAX を超えない。
-	return (int)strlen(s);
+    // fgets() で指定するバッファサイズ(第2引数) は int 型なので
+    // s の長さは INT_MAX を超えない。
+    return (int)strlen(s);
 }
 
 /**
@@ -83,10 +83,10 @@ read_stdin(char *out, int size, void *arg)
 static int
 write_file(const char *s, void *arg)
 {
-	// 書き込みは失敗しないものとする。問題があればそのとき対応する。
-	fprintf(arg, "%s\n", s);
+    // 書き込みは失敗しないものとする。問題があればそのとき対応する。
+    fprintf(arg, "%s\n", s);
 
-	return 0;
+    return 0;
 }
 
 /**
@@ -98,62 +98,62 @@ write_file(const char *s, void *arg)
 static int
 stdin2file(FILE *file)
 {
-	/*
-	 * この関数は「main() の処理の一部を切り出したもの」という位置付けのため
-	 * プログラムの終了に関するエラーメッセージもこの関数内で出力している。
-	 */
+    /*
+     * この関数は「main() の処理の一部を切り出したもの」という位置付けのため
+     * プログラムの終了に関するエラーメッセージもこの関数内で出力している。
+     */
 
-	// 標準入力からの読み込み＋ソート済み文字列リスト作成
-	List list = list_new();
-	int n = 1;
-	int result = list_init_from_reader(&list, read_stdin, &n);
-	if(result > 0) {
-		fprintf(stderr,
-				"入力された文字列からのリスト構築に失敗したため、プログラムを終了します。\n");
-		return 1;
-	} else if(result < 0) {
-		switch(result) {
-		case INVALID_STR:
-			fprintf(stderr,
-					"半角英数字以外が入力されたため、プログラムを終了します。\n");
-			break;
-		default:
-			fprintf(stderr,
-					"文字列の読み込みに失敗したため、プログラムを終了します。\n");
-			break;
-		}
-		return 1;
-	}
+    // 標準入力からの読み込み＋ソート済み文字列リスト作成
+    List list = list_new();
+    int n = 1;
+    int result = list_init_from_reader(&list, read_stdin, &n);
+    if(result > 0) {
+        fprintf(stderr,
+                "入力された文字列からのリスト構築に失敗したため、プログラムを終了します。\n");
+        return 1;
+    } else if(result < 0) {
+        switch(result) {
+        case INVALID_STR:
+            fprintf(stderr,
+                    "半角英数字以外が入力されたため、プログラムを終了します。\n");
+            break;
+        default:
+            fprintf(stderr,
+                    "文字列の読み込みに失敗したため、プログラムを終了します。\n");
+            break;
+        }
+        return 1;
+    }
 
-	// 読み込んだ文字列をファイルへ出力
-	list_foreach(&list, write_file, file);
-	printf("文字列のソート結果をファイルに出力しました。\n");
+    // 読み込んだ文字列をファイルへ出力
+    list_foreach(&list, write_file, file);
+    printf("文字列のソート結果をファイルに出力しました。\n");
 
-	list_clear(&list);
+    list_clear(&list);
 
-	return 0;
+    return 0;
 }
 
 int
 main(int argc, char *argv[])
 {
-	if(argc <= 1) {
-		fprintf(stderr,
-				"出力用のファイルが指定されていません。プログラムを終了します。\n");
-		return EXIT_FAILURE;
-	}
+    if(argc <= 1) {
+        fprintf(stderr,
+                "出力用のファイルが指定されていません。プログラムを終了します。\n");
+        return EXIT_FAILURE;
+    }
 
-	const char *file_name = argv[1];
-	FILE *file = fopen(file_name, "a");
-	if(file == NULL) {
-		fprintf(stderr,
-				"ファイル '%s' のオープンに失敗しました。プログラムを終了します。\n",
-				file_name);
-		return EXIT_FAILURE;
-	}
-	int result = stdin2file(file);
-	fclose(file);
+    const char *file_name = argv[1];
+    FILE *file = fopen(file_name, "a");
+    if(file == NULL) {
+        fprintf(stderr,
+                "ファイル '%s' のオープンに失敗しました。プログラムを終了します。\n",
+                file_name);
+        return EXIT_FAILURE;
+    }
+    int result = stdin2file(file);
+    fclose(file);
 
-	return result;
+    return result;
 }
 

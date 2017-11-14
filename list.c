@@ -12,8 +12,8 @@
 List
 list_new(void)
 {
-	List list = { NULL, 0 };
-	return list;
+    List list = { NULL, 0 };
+    return list;
 }
 
 /**
@@ -33,26 +33,26 @@ list_new(void)
 int
 list_init_from_reader(List *list, Reader read_line, void *arg)
 {
-	list_clear(list);
+    list_clear(list);
 
-	for(;;) {
-		char out[STR_SIZE];
-		int len = read_line(out, sizeof(out), arg);
-		if(len < 0) {
-			list_clear(list);
-			return len;
-		} else if(len == 0) {
-			// 読み込む文字列が存在しない場合、終了
-			break;
-		}
+    for(;;) {
+        char out[STR_SIZE];
+        int len = read_line(out, sizeof(out), arg);
+        if(len < 0) {
+            list_clear(list);
+            return len;
+        } else if(len == 0) {
+            // 読み込む文字列が存在しない場合、終了
+            break;
+        }
 
-		int result = list_add(list, out);
-		if(result != 0) {
-			list_clear(list);
-			return 1;
-		}
-	}
-	return 0;
+        int result = list_add(list, out);
+        if(result != 0) {
+            list_clear(list);
+            return 1;
+        }
+    }
+    return 0;
 }
 
 /**
@@ -65,27 +65,27 @@ list_init_from_reader(List *list, Reader read_line, void *arg)
 int
 list_add(List *list, const char *s)
 {
-	ListEntry *new_entry = malloc(sizeof(ListEntry));
-	if(new_entry == NULL) {
-		fprintf(stderr, "ListEntry 用のメモリ領域の確保に失敗しました。");
-		return 1;
-	}
-	strncpy(new_entry->str, s, sizeof(new_entry->str));
+    ListEntry *new_entry = malloc(sizeof(ListEntry));
+    if(new_entry == NULL) {
+        fprintf(stderr, "ListEntry 用のメモリ領域の確保に失敗しました。");
+        return 1;
+    }
+    strncpy(new_entry->str, s, sizeof(new_entry->str));
 
-	// 文字列について文字コードで昇順にソートする
-	ListEntry **entry = &(list->head);
-	while(*entry != NULL) {
-		if(strcmp(new_entry->str, (*entry)->str) <= 0) {
-			break;
-		}
-		entry = &((*entry)->next);
-	}
-	new_entry->next = *entry;
-	*entry = new_entry;
+    // 文字列について文字コードで昇順にソートする
+    ListEntry **entry = &(list->head);
+    while(*entry != NULL) {
+        if(strcmp(new_entry->str, (*entry)->str) <= 0) {
+            break;
+        }
+        entry = &((*entry)->next);
+    }
+    new_entry->next = *entry;
+    *entry = new_entry;
 
-	list->size++;
+    list->size++;
 
-	return 0;
+    return 0;
 }
 
 /**
@@ -99,15 +99,15 @@ list_add(List *list, const char *s)
 int
 list_foreach(List *list, Function apply, void *arg)
 {
-	ListEntry *entry = list->head;
-	while(entry != NULL) {
-		int result = apply(entry->str, arg);
-		if(result != 0) {
-			return result;
-		}
-		entry = entry->next;
-	}
-	return 0;
+    ListEntry *entry = list->head;
+    while(entry != NULL) {
+        int result = apply(entry->str, arg);
+        if(result != 0) {
+            return result;
+        }
+        entry = entry->next;
+    }
+    return 0;
 }
 
 /**
@@ -116,13 +116,13 @@ list_foreach(List *list, Function apply, void *arg)
 void
 list_clear(List *list)
 {
-	ListEntry *entry = list->head;
-	while(entry != NULL) {
-		ListEntry *next = entry->next;
-		free(entry);
-		entry = next;
-	}
-	list->head = NULL;
-	list->size = 0;
+    ListEntry *entry = list->head;
+    while(entry != NULL) {
+        ListEntry *next = entry->next;
+        free(entry);
+        entry = next;
+    }
+    list->head = NULL;
+    list->size = 0;
 }
 
