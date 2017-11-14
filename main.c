@@ -73,7 +73,7 @@ read_stdin(char *out, int size, void *arg)
 
     // fgets() で指定するバッファサイズ(第2引数) は int 型なので
     // s の長さは INT_MAX を超えない。
-    return (int)strlen(s);
+    return (int)len;
 }
 
 /**
