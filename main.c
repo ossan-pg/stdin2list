@@ -133,6 +133,8 @@ stdin2file(FILE *file)
 
     // 読み込んだ文字列をファイルへ出力
     list_foreach(&list, write_file, file);
+    // 文字列の後は空行で終了する
+    write_file("", file);
     printf("文字列のソート結果をファイルに出力しました。\n");
 
     list_clear(&list);
